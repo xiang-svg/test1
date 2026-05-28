@@ -7,6 +7,14 @@ export function buildRewritePrompt(personalityTrait: string): string {
   );
 }
 
+export function buildGeneratePrompt(): string {
+  return (
+    '你是一个创意文案生成器。请随机生成一句有趣、适合玩传话游戏的句子。' +
+    '可以是日常吐槽、网络热梗、职场趣事、情感段子等，风格随机。' +
+    '只输出句子本身，不要加引号、不要解释，控制在30字以内。'
+  );
+}
+
 export function buildScorePrompt(): string {
   return (
     '你是一个语义相似度评分器。比较两句话的语义相似度，返回0-100的整数分数。' +

@@ -1,5 +1,5 @@
 import { getApiKey } from './config';
-import { buildRewritePrompt, buildScorePrompt } from './prompts';
+import { buildRewritePrompt, buildScorePrompt, buildGeneratePrompt } from './prompts';
 
 const API_URL = 'https://api.deepseek.com/chat/completions';
 
@@ -80,6 +80,34 @@ export async function* streamRewrite(
       }
     }
   }
+}
+
+export async function generatePrompt(signal?: AbortSignal): Promise<string> {
+  const apiKey = getApiKey();
+  const res = await retryFetch(
+    () =>
+      fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          stream: false,
+          max_tokens: 100,
+          temperature: 1.2,
+          messages: [
+            { role: 'system', content: buildGeneratePrompt() },
+          ],
+        }),
+        signal,
+      }),
+    signal,
+  );
+
+  const data = await res.json();
+  return data.choices[0].message.content.trim();
 }
 
 export async function scoreDrift(
